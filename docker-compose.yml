@@ -1,0 +1,107 @@
+version: '3.8'
+
+services:
+  # Main application
+  clause-explainer:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      # MongoDB Configuration
+      - MONGODB_URL=mongodb://mongodb:27017
+      - MONGODB_DATABASE=clause_explainer
+      
+      # Qdrant Configuration
+      - QDRANT_HOST=qdrant
+      - QDRANT_PORT=6333
+      
+      # Server Configuration
+      - HOST=0.0.0.0
+      - PORT=8000
+      - DEBUG=false
+      
+      # AI API Keys (set these in your .env file or pass via environment)
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      
+      # Google Cloud Configuration
+      - GOOGLE_PROJECT_ID=${GOOGLE_PROJECT_ID}
+      - GOOGLE_CLOUD_PROJECT=${GOOGLE_CLOUD_PROJECT}
+      - GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS}
+      - VERTEX_AI_REGION=${VERTEX_AI_REGION:-asia-south1}
+      
+      # Summarizer MongoDB Configuration
+      - MONGODB_CONNECTION_STRING=mongodb://mongodb:27017
+      - MONGODB_DATABASE_NAME=legal_summarizer
+      
+      # Processing Configuration
+      - MAX_FILE_SIZE_MB=100
+      - MAX_DOCUMENT_PAGES=50
+      - MAX_AUDIO_DURATION_MINUTES=180
+      - PROCESSING_TIMEOUT_SECONDS=1800
+      
+      # Cache Configuration
+      - ENABLE_CACHING=true
+      - CACHE_TTL_HOURS=24
+    volumes:
+      - ./clause_exp/uploads:/app/clause_exp/uploads
+      - ./uploads:/app/uploads
+      - /tmp/uploads:/tmp/uploads
+    depends_on:
+      - mongodb
+      - qdrant
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # MongoDB database
+  mongodb:
+    image: mongo:7.0
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=password
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Qdrant vector database
+  qdrant:
+    image: qdrant/qdrant:v1.7.4
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - qdrant_data:/qdrant/storage
+    environment:
+      - QDRANT__SERVICE__HTTP_PORT=6333
+      - QDRANT__SERVICE__GRPC_PORT=6334
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:6333/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  mongodb_data:
+    driver: local
+  qdrant_data:
+    driver: local
+
+networks:
+  default:
+    name: clause-explainer-network

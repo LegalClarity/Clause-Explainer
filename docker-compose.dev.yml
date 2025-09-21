@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  clause-explainer:
+    build:
+      context: .
+      target: builder  # Use builder stage for development dependencies
+    volumes:
+      # Mount source code for live reload
+      - .:/app
+      - /app/__pycache__  # Exclude pycache
+      - /app/.git  # Exclude git
+    environment:
+      - DEBUG=true
+      - LOG_LEVEL=DEBUG
+    command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload", "--log-level", "debug"]
+    
+  # Development database with easier access
+  mongodb:
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=dev
+      - MONGO_INITDB_ROOT_PASSWORD=devpass
+    
+  # Qdrant with dashboard access
+  qdrant:
+    ports:
+      - "6333:6333"
+      - "6334:6334"
