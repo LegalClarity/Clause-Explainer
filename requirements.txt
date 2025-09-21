@@ -1,0 +1,55 @@
+# Combined Requirements for Clause Explainer and Legal Summarizer APIs
+
+# Core FastAPI and Web Framework
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+
+# Data Validation and Settings
+pydantic>=2.4.0
+pydantic-settings>=2.0.0
+
+# Database and Vector Store
+motor>=3.3.0
+pymongo>=4.5.0
+qdrant-client==1.7.1
+
+# AI and ML Libraries
+sentence-transformers==2.2.2
+openai==1.3.7
+google-generativeai>=0.5.0
+google-cloud-aiplatform>=1.38.0
+google-cloud-speech>=2.22.0
+google-cloud-documentai>=2.20.0
+google-cloud-storage>=2.10.0
+google-cloud-texttospeech>=2.29.0
+
+# Document Processing
+PyPDF2>=3.0.1
+python-docx==1.1.0
+python-multipart>=0.0.6
+aiofiles>=23.2.1
+python-magic>=0.4.27
+pydub>=0.25.1
+
+# HTTP and Networking
+httpx>=0.25.0
+
+# Authentication and Security
+python-jose[cryptography]>=3.3.0
+
+# Environment and Configuration
+python-dotenv>=1.0.0
+
+# Logging
+structlog==23.2.0
+loguru>=0.7.2
+
+# Utilities
+tenacity==8.2.3
+numpy==1.24.3
+psutil>=5.9.0
+
+# Development and Testing
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+reportlab>=4.0.4

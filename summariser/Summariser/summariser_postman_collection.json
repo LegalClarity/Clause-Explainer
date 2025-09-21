@@ -1,0 +1,339 @@
+{
+  "info": {
+    "name": "Legal Document & Audio Summarizer API",
+    "description": "Postman collection for the Legal Document & Audio Summarizer FastAPI service. This API provides intelligent summarization and speech conversion of legal documents using Google Cloud AI services.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "version": "1.0.0"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000",
+      "type": "string",
+      "description": "Base URL of the API server"
+    },
+    {
+      "key": "api_version",
+      "value": "v1",
+      "type": "string",
+      "description": "API version"
+    }
+  ],
+  "item": [
+    {
+      "name": "Root Endpoints",
+      "description": "Basic information and API discovery endpoints",
+      "item": [
+        {
+          "name": "Get API Information",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/",
+              "host": ["{{base_url}}"],
+              "path": [""]
+            },
+            "description": "Get basic API information including available endpoints, supported formats, and features."
+          },
+          "response": []
+        },
+        {
+          "name": "API Endpoints Info",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api",
+              "host": ["{{base_url}}"],
+              "path": ["api"]
+            },
+            "description": "Get detailed information about API endpoints and configuration limits."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Document Processing",
+      "description": "Endpoints for processing and summarizing legal documents",
+      "item": [
+        {
+          "name": "Summarize Legal Document",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "multipart/form-data"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": [],
+                  "description": "Legal document file (PDF, DOCX, or TXT)"
+                },
+                {
+                  "key": "include_financial_analysis",
+                  "value": "true",
+                  "type": "text",
+                  "description": "Include financial impact analysis in summary"
+                },
+                {
+                  "key": "include_risk_assessment",
+                  "value": "true",
+                  "type": "text",
+                  "description": "Include legal risk assessment in summary"
+                },
+                {
+                  "key": "summary_length",
+                  "value": "comprehensive",
+                  "type": "text",
+                  "description": "Summary length: 'brief', 'standard', or 'comprehensive'"
+                },
+                {
+                  "key": "language_preference",
+                  "value": "en",
+                  "type": "text",
+                  "description": "Language code for the summary (e.g., 'en', 'es')"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/{{api_version}}/documents/summarize",
+              "host": ["{{base_url}}"],
+              "path": ["api", "{{api_version}}", "documents", "summarize"]
+            },
+            "description": "Upload and analyze a legal document to generate comprehensive summary with risk assessment and financial analysis. Supports PDF, DOCX, and TXT files up to 100MB."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Audio Processing",
+      "description": "Endpoints for converting documents to speech and audio processing",
+      "item": [
+        {
+          "name": "Convert PDF to Speech",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "audio/mpeg"
+              },
+              {
+                "key": "Content-Type",
+                "value": "multipart/form-data"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": [],
+                  "description": "PDF document to convert to speech"
+                },
+                {
+                  "key": "document_title",
+                  "value": "Legal Document Summary",
+                  "type": "text",
+                  "description": "Title for the document (used in audio filename)"
+                },
+                {
+                  "key": "summary_length",
+                  "value": "comprehensive",
+                  "type": "text",
+                  "description": "Summary length: 'brief', 'standard', or 'comprehensive'"
+                },
+                {
+                  "key": "voice_name",
+                  "value": "Charon",
+                  "type": "text",
+                  "description": "Voice name for text-to-speech (e.g., 'Charon', 'Kore', 'Fenrir')"
+                },
+                {
+                  "key": "model_name",
+                  "value": "gemini-2.5-pro-preview-tts",
+                  "type": "text",
+                  "description": "Gemini TTS model name"
+                },
+                {
+                  "key": "speaking_rate",
+                  "value": "1.0",
+                  "type": "text",
+                  "description": "Speaking rate (0.25-4.0)"
+                },
+                {
+                  "key": "pitch",
+                  "value": "0.0",
+                  "type": "text",
+                  "description": "Voice pitch adjustment (-20.0 to 20.0)"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/{{api_version}}/audio/pdf-to-speech",
+              "host": ["{{base_url}}"],
+              "path": ["api", "{{api_version}}", "audio", "pdf-to-speech"]
+            },
+            "description": "Convert a PDF legal document to narrated speech. The endpoint extracts text, generates an AI summary, and converts it to high-quality audio using Gemini TTS. Returns MP3 file directly."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Health & Monitoring",
+      "description": "Health check and monitoring endpoints for API status",
+      "item": [
+        {
+          "name": "Basic Health Check",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/health",
+              "host": ["{{base_url}}"],
+              "path": ["health"]
+            },
+            "description": "Basic health check to verify API and service status. Returns overall health status and individual service statuses."
+          },
+          "response": []
+        },
+        {
+          "name": "Detailed Health Check",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/health/detailed",
+              "host": ["{{base_url}}"],
+              "path": ["health", "detailed"]
+            },
+            "description": "Detailed health check with system metrics, database statistics, and configuration information."
+          },
+          "response": []
+        },
+        {
+          "name": "Service Status",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/health/services",
+              "host": ["{{base_url}}"],
+              "path": ["health", "services"]
+            },
+            "description": "Check individual service availability and connectivity status."
+          },
+          "response": []
+        },
+        {
+          "name": "Application Metrics",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/health/metrics",
+              "host": ["{{base_url}}"],
+              "path": ["health", "metrics"]
+            },
+            "description": "Get application metrics for monitoring and alerting purposes."
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Add timestamp to requests for tracking",
+          "pm.globals.set('request_timestamp', new Date().toISOString());",
+          "",
+          "// Add request ID for correlation",
+          "pm.globals.set('request_id', pm.variables.replaceIn('{{$guid}}'));"
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Global test script for all requests",
+          "",
+          "// Check if response time is acceptable (< 30 seconds for processing endpoints)",
+          "if (pm.request.method === 'POST') {",
+          "    pm.test('Response time is acceptable', function () {",
+          "        pm.expect(pm.response.responseTime).to.be.below(30000);",
+          "    });",
+          "}",
+          "",
+          "// Check response status",
+          "pm.test('Status code is valid', function () {",
+          "    pm.response.to.have.status(pm.response.code);",
+          "});",
+          "",
+          "// Check for proper headers",
+          "pm.test('Response has proper headers', function () {",
+          "    pm.response.to.have.header('Content-Type');",
+          "    if (pm.request.method === 'POST' && pm.response.code === 200) {",
+          "        pm.response.to.have.header('X-Request-ID');",
+          "        pm.response.to.have.header('X-Process-Time');",
+          "    }",
+          "});",
+          "",
+          "// Store response for debugging",
+          "pm.collectionVariables.set('last_response_code', pm.response.code);",
+          "pm.collectionVariables.set('last_response_time', pm.response.responseTime);"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,268 @@
+{
+  "info": {
+    "name": "Clause Explainer Timeline API",
+    "description": "Legal Document Clause Explainer and Timeline Analysis API Collection",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "clause-explainer-api"
+  },
+  "item": [
+    {
+      "name": "Root Endpoints",
+      "item": [
+        {
+          "name": "API Root",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                ""
+              ]
+            },
+            "description": "Get API information and available endpoints"
+          },
+          "response": []
+        },
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/health",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "health"
+              ]
+            },
+            "description": "Check if the API is healthy and running"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Document Analysis",
+      "item": [
+        {
+          "name": "Analyze Document",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": [],
+                  "description": "Legal document file (PDF, DOCX, TXT)"
+                },
+                {
+                  "key": "document_type",
+                  "value": "rental_agreement",
+                  "description": "Document type: rental_agreement, loan_contract, terms_of_service",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/documents/analyze",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "documents",
+                "analyze"
+              ]
+            },
+            "description": "Upload and analyze a legal document to extract clauses, assess severity, and provide contextual explanations. This is the main endpoint for document processing."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Document Status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/documents/{{document_id}}/status",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "documents",
+                "{{document_id}}",
+                "status"
+              ]
+            },
+            "description": "Get the processing status of a document"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Clause Details",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/documents/{{document_id}}/clauses/{{clause_id}}/details",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "documents",
+                "{{document_id}}",
+                "clauses",
+                "{{clause_id}}",
+                "details"
+              ]
+            },
+            "description": "Get detailed information about a specific clause including related clauses and contextual explanation"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "RAG Query",
+      "item": [
+        {
+          "name": "Query Legal Knowledge Base",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"What are the key risks in this rental agreement?\",\n  \"document_id\": \"doc_1234567890abcdef\",\n  \"context_limit\": 5\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/rag/query",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "rag",
+                "query"
+              ]
+            },
+            "description": "Query the legal knowledge base with custom questions about clauses and legal documents"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Admin Endpoints",
+      "item": [
+        {
+          "name": "Initialize Knowledge Base",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/initialize-knowledge-base",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "initialize-knowledge-base"
+              ]
+            },
+            "description": "Initialize the legal knowledge base (admin endpoint - requires admin access)"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Health & Monitoring",
+      "item": [
+        {
+          "name": "Check AI Service Health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/health/ai-service",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "health",
+                "ai-service"
+              ]
+            },
+            "description": "Check the health status of AI services (OpenAI and Google Gemini)"
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Set base URL if not set",
+          "if (!pm.environment.get(\"base_url\")) {",
+          "    pm.environment.set(\"base_url\", \"http://localhost:8000\");",
+          "}",
+          "",
+          "// Set default document_id if not set",
+          "if (!pm.environment.get(\"document_id\")) {",
+          "    pm.environment.set(\"document_id\", \"doc_1234567890abcdef\");",
+          "}",
+          "",
+          "// Set default clause_id if not set",
+          "if (!pm.environment.get(\"clause_id\")) {",
+          "    pm.environment.set(\"clause_id\", \"clause_1234567890abcdef\");",
+          "}"
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000",
+      "type": "string"
+    },
+    {
+      "key": "document_id",
+      "value": "doc_1234567890abcdef",
+      "type": "string"
+    },
+    {
+      "key": "clause_id",
+      "value": "clause_1234567890abcdef",
+      "type": "string"
+    }
+  ]
+}
